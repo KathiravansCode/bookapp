@@ -1,0 +1,65 @@
+app.get("/",(req,res)=>{
+   
+        return res.status(200).send("Welcome to Mern Stack")
+   
+//  return res.status(201).send("welcome to mern stack project")
+})
+
+
+
+app.get("/books/:id",async(req,res)=>{
+    try {
+        const {id}=req.params;
+        const book=await Book.findById(id)
+        return res.status(200).send(book)
+    } catch (error) {
+        console.log(error)
+    }
+
+//  return res.status(201).send("welcome to mern stack project")
+})
+
+app.post("/books",async(req,res)=>{
+    try {
+        if(!req.body.title||!req.body.author||!req.body.publishYear){
+            return res.status(400).send({message:"Please enter all fields"},)
+        }
+        const newBook={
+            title:req.body.title,
+            author:req.body.author,
+            publishYear:req.body.publishYear,
+        }
+        const book=await Book.create(newBook)
+        return res.status(200).send(book)
+    } catch (error) {
+        console.log(error)
+    }
+   
+})
+app.put("/books/:id",async(req,res)=>{
+    try {
+       const {id}=req.params;
+       const result=await Book.findByIdAndUpdate(id,req.body)
+        
+      if(!result){
+        return res.status(404).json({message:"Book not found"})
+      }
+        return res.status(200).json({message:"Book updated successfully"})
+    } catch (error) {
+        console.log(error)
+    }
+   
+})
+app.delete("/books/:id",async(req,res)=>{
+   try{
+    const {id}=req.params;
+    const result=await Book.findByIdAndDelete(id)
+    if(!result){
+        return res.status(404).json({message:"Book not found"})
+    }
+    return res.status(200).json({message:"Book deleted successfully"})
+   } 
+   catch(e){
+    console.log(e)
+   }
+})
